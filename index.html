@@ -1,19 +1,14 @@
-```html id="w7v3qp"
+```html id="f3k92a"
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Render DRY Modular</title>
+    <title>Render vs DRY</title>
     <style>
-        body {
-            font-family: Arial;
-        }
+        body { font-family: Arial; }
 
-        h2 {
-            text-align: center;
-        }
+        h2 { text-align: center; }
 
-        /* TABLE */
         table {
             border-collapse: collapse;
             width: 60%;
@@ -31,7 +26,6 @@
             color: white;
         }
 
-        /* LIST */
         ul {
             width: 60%;
             margin: 20px auto;
@@ -42,12 +36,10 @@
             border-bottom: 1px solid #ccc;
         }
 
-        /* CARD */
         .card-container {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin-top: 20px;
         }
 
         .card {
@@ -56,27 +48,37 @@
             width: 150px;
             text-align: center;
             border-radius: 10px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
         }
     </style>
 </head>
 <body>
 
-<h2>TABLE</h2>
+<h2>TABLE 1 (Render Biasa)</h2>
 <table>
-    <thead id="table-head"></thead>
-    <tbody id="table-body"></tbody>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nama</th>
+        </tr>
+    </thead>
+    <tbody id="table-render"></tbody>
 </table>
 
-<h2>LIST (2 Data)</h2>
+<h2>TABLE 2 (DRY, REUSE, MODULAR)</h2>
+<table>
+    <thead id="table-head"></thead>
+    <tbody id="table-dry"></tbody>
+</table>
+
+<h2>LIST (2 DATA)</h2>
 <ul id="list"></ul>
 
-<h2>CARD (2 Data)</h2>
+<h2>CARD (2 DATA)</h2>
 <div class="card-container" id="card"></div>
 
 <script>
 /* =====================
-   DATA (SCALABLE)
+   DATA
 ===================== */
 const data = [
     { id: 1, nama: "Andi" },
@@ -86,16 +88,27 @@ const data = [
 ];
 
 /* =====================
-   CONFIG (REUSE)
+   1. RENDER BIASA
+===================== */
+const tableRender = document.getElementById("table-render");
+
+data.forEach(item => {
+    tableRender.innerHTML += `
+        <tr>
+            <td>${item.id}</td>
+            <td>${item.nama}</td>
+        </tr>
+    `;
+});
+
+/* =====================
+   2. DRY + MODULAR
 ===================== */
 const columns = [
     { key: "id", label: "ID" },
     { key: "nama", label: "Nama" }
 ];
 
-/* =====================
-   CREATE ELEMENT (DRY)
-===================== */
 function createHeader(cols) {
     return `<tr>${cols.map(c => `<th>${c.label}</th>`).join("")}</tr>`;
 }
@@ -104,46 +117,30 @@ function createRow(item, cols) {
     return `<tr>${cols.map(c => `<td>${item[c.key]}</td>`).join("")}</tr>`;
 }
 
-function createListItem(item) {
-    return `<li>${item.id} - ${item.nama}</li>`;
-}
-
-function createCard(item) {
-    return `
-        <div class="card">
-            <h3>${item.nama}</h3>
-            <p>ID: ${item.id}</p>
-        </div>
-    `;
-}
-
-/* =====================
-   RENDER (MODULAR)
-===================== */
 function renderTable(data, cols) {
     document.getElementById("table-head").innerHTML = createHeader(cols);
-    document.getElementById("table-body").innerHTML =
+    document.getElementById("table-dry").innerHTML =
         data.map(d => createRow(d, cols)).join("");
 }
 
-function renderList(data) {
-    // ambil 2 data pertama
-    document.getElementById("list").innerHTML =
-        data.slice(0,2).map(d => createListItem(d)).join("");
-}
-
-function renderCard(data) {
-    // ambil 2 data pertama
-    document.getElementById("card").innerHTML =
-        data.slice(0,2).map(d => createCard(d)).join("");
-}
+renderTable(data, columns);
 
 /* =====================
-   INIT (RENDER LOGIC)
+   LIST (2 DATA)
 ===================== */
-renderTable(data, columns);
-renderList(data);
-renderCard(data);
+document.getElementById("list").innerHTML =
+    data.slice(0,2).map(d => `<li>${d.nama}</li>`).join("");
+
+/* =====================
+   CARD (2 DATA)
+===================== */
+document.getElementById("card").innerHTML =
+    data.slice(2,4).map(d => `
+        <div class="card">
+            <h3>${d.nama}</h3>
+            <p>ID: ${d.id}</p>
+        </div>
+    `).join("");
 
 </script>
 
