@@ -1,9 +1,9 @@
-```html id="f3k92a"
+```html id="x9k3lm"
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Render vs DRY</title>
+    <title>Render vs DRY Lengkap</title>
     <style>
         body { font-family: Arial; }
 
@@ -39,7 +39,9 @@
         .card-container {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
         .card {
@@ -70,11 +72,17 @@
     <tbody id="table-dry"></tbody>
 </table>
 
-<h2>LIST (2 DATA)</h2>
-<ul id="list"></ul>
+<h2>LIST 1 (Dari Table 1)</h2>
+<ul id="list1"></ul>
 
-<h2>CARD (2 DATA)</h2>
-<div class="card-container" id="card"></div>
+<h2>LIST 2 (Dari Table 2)</h2>
+<ul id="list2"></ul>
+
+<h2>CARD 1 (Dari Table 1)</h2>
+<div class="card-container" id="card1"></div>
+
+<h2>CARD 2 (Dari Table 2)</h2>
+<div class="card-container" id="card2"></div>
 
 <script>
 /* =====================
@@ -88,7 +96,7 @@ const data = [
 ];
 
 /* =====================
-   1. RENDER BIASA
+   1. TABLE RENDER BIASA
 ===================== */
 const tableRender = document.getElementById("table-render");
 
@@ -102,7 +110,7 @@ data.forEach(item => {
 });
 
 /* =====================
-   2. DRY + MODULAR
+   2. TABLE DRY MODULAR
 ===================== */
 const columns = [
     { key: "id", label: "ID" },
@@ -126,24 +134,43 @@ function renderTable(data, cols) {
 renderTable(data, columns);
 
 /* =====================
-   LIST (2 DATA)
+   LIST
 ===================== */
-document.getElementById("list").innerHTML =
-    data.slice(0,2).map(d => `<li>${d.nama}</li>`).join("");
+function createList(item) {
+    return `<li>${item.id} - ${item.nama}</li>`;
+}
+
+// List 1 (dari render biasa)
+document.getElementById("list1").innerHTML =
+    data.map(d => createList(d)).join("");
+
+// List 2 (dari DRY)
+document.getElementById("list2").innerHTML =
+    data.map(d => createList(d)).join("");
 
 /* =====================
-   CARD (2 DATA)
+   CARD
 ===================== */
-document.getElementById("card").innerHTML =
-    data.slice(2,4).map(d => `
+function createCard(item) {
+    return `
         <div class="card">
-            <h3>${d.nama}</h3>
-            <p>ID: ${d.id}</p>
+            <h3>${item.nama}</h3>
+            <p>ID: ${item.id}</p>
         </div>
-    `).join("");
+    `;
+}
+
+// Card 1 (dari render biasa)
+document.getElementById("card1").innerHTML =
+    data.map(d => createCard(d)).join("");
+
+// Card 2 (dari DRY)
+document.getElementById("card2").innerHTML =
+    data.map(d => createCard(d)).join("");
 
 </script>
 
 </body>
 </html>
 ```
+
